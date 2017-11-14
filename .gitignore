@@ -4,6 +4,8 @@
 #custom ignore
 *.sln
 *.csproj
+*.projitems
+*.shproj
 
 # User-specific files
 *.suo
