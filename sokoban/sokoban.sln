@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27102.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "sokoban", "sokoban\sokoban.shproj", "{C5D5E67B-2BE2-49F6-881D-DB8F19A754C0}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		sokoban\sokoban.projitems*{c5d5e67b-2be2-49f6-881d-db8f19a754c0}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DEB611BF-6FC1-471B-B52E-C0C3BF1B7772}
+	EndGlobalSection
+EndGlobal
