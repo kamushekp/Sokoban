@@ -7,7 +7,7 @@ using Game.Logic;
 
 namespace Game.creature_box
 {
-    class BoxHandler : ICreatureHandler
+    public class BoxHandler : ICreatureHandler
     {
 
         public bool ChangeGameState(Logic.Game game, ICreature creature, UserComand comand)

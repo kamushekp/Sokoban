@@ -11,15 +11,21 @@ namespace Game.creature_box
         private UserComand currentComand;
         private BoxHandler handler;
 
+        public Box(int x, int y)
+        {
+            handler = new BoxHandler();
+            Located = new Location(x, y);
+            IsActive = true;
+        }
+
         public Location Located
         {
-            get => throw new NotImplementedException();
-            set => Located = value;
+            get; set;
         }
 
         public bool IsActive
         {
-            get => false;
+            get; set; 
         }
 
         public ICreatureHandler creatureHandler
@@ -35,7 +41,7 @@ namespace Game.creature_box
 
         public List<UserComand> GetWhatReactingOn()
         {
-            throw new NotImplementedException();
+            return new List<UserComand>();
         }
 
         public int GetDrawingPriority()
@@ -45,8 +51,7 @@ namespace Game.creature_box
 
         public string GetImageFileName()
         {
-            throw new NotImplementedException();
+            return "Box0.png";
         }
-
     }
 }

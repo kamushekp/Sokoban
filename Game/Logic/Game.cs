@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
+using Game.NMapCreator;
+
 namespace Game.Logic
 {
     public class Game
     {
-        public ICreature[,] MapOfCreatures {get;}
+        private ICreature[,] currentMap;
+        private MapCreator creator;
+
+        public ICreature[,] CurrentMap() => currentMap;
         public bool IsOver
         {
             get
@@ -15,6 +20,12 @@ namespace Game.Logic
                 throw new NotImplementedException();
             }
         }
-        public ReadOnlyCollection<string> GameMaps { get; }
+
+        public Game()
+        {
+            creator = new MapCreator();
+            currentMap = creator.Maps[0];
+        }
+
     }
 }

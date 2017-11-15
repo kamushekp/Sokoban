@@ -9,11 +9,11 @@ using System.Windows.Forms;
 
 namespace Game.GUI
 {
-    public partial class GameWindow : Form
+    public class GameWindow : Form
     {
-        public GameWindow()
+        public GameWindow(Logic.Game game)
         {
-            InitializeComponent();
+            
         }
     }
 }
