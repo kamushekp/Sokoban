@@ -4,15 +4,18 @@ using System.Text;
 
 namespace Game.Logic
 {
-    interface ICreature
+    public interface ICreature
     {
         Location Located { get; }
         bool IsActive { get; }
+        UserComand CurrentComand {get; set;}
+
+        ICreatureHandler creatureHandler { get; }
+        List<UserComand> GetWhatReactingOn();
 
         string GetImageFileName();
         int GetDrawingPriority();
-        List<IInnerComand> GetWhatCanDo();
-        List<UserComand> GetWhatReactingOn();
+
 
     }
 }
