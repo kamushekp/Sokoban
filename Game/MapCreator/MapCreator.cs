@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Game.Logic;
+using Microsoft.Xna.Framework.Graphics;
+using NGame.creature_box;
+using NGame.Logic;
 
-namespace Game.NMapCreator
+namespace NGame.NMapCreator
 {
     public class MapCreator
     {
+        private Dictionary<string, Texture2D> textures;
+
         public List<ICreature[,]> Maps { get; }
  
-        public MapCreator()
+        public MapCreator(Dictionary<string, Texture2D> textures)
         {
             Maps = new List<ICreature[,]>();
+            this.textures = textures;
             CreateWorld();
         }
 
@@ -51,7 +56,7 @@ namespace Game.NMapCreator
             switch (c)
             {
                 case '#':
-                    return new creature_box.Box(x, y);
+                return new Box(x, y, textures[nameof(Box)]);
                 default:
                     throw new NotImplementedException();
             }

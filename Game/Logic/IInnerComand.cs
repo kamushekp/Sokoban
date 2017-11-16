@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Game.Logic
+namespace NGame.Logic
 {
     public interface ICreatureHandler
     {
-        bool ChangeGameState(Game game, ICreature creature, UserComand comand);
+        bool ChangeGameState(Sokoban game, ICreature creature, UserComand comand);
     }
 }

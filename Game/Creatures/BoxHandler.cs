@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using NGame.Logic;
 
 namespace NGame.creature_box
 {
-    public class BoxHandler : ICreatureHandler
+    /*public class BoxHandler : ICreatureHandler
     {
 
         public bool ChangeGameState(Logic.Sokoban game, ICreature creature, UserComand comand)
@@ -27,4 +26,5 @@ namespace NGame.creature_box
             creature.Located.Y += dy;
         }
     }
+*/
 }

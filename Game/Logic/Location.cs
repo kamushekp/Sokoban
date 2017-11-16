@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Game.Logic
+namespace NGame.Logic
 {
     public class Location
     {

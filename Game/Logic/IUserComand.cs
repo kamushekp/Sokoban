@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 
-namespace Game.Logic
+namespace NGame.Logic
 {
     public class UserComand
     {

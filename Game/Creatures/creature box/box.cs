@@ -2,36 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Game.Logic;
+using NGame.Logic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Game.creature_box
+namespace NGame.creature_box
 {
     public class Box : ICreature
     {
         private UserComand currentComand;
-        private BoxHandler handler;
+        //private BoxHandler handler;
+        private Vector2 location;
+        private Texture2D texture;
 
-        public Box(int x, int y)
+        public Vector2 Location => location;
+
+        //public ICreatureHandler CreatureHandler => handler;
+
+        public Box(int x, int y, string imageFileName)
         {
-            handler = new BoxHandler();
-            Located = new Location(x, y);
+            //handler = new BoxHandler();
             IsActive = true;
+            location = new Vector2(x, y);
         }
 
-        public Location Located
+        public Box(int x, int y, Texture2D texture)
         {
-            get; set;
+            //handler = new BoxHandler();
+            IsActive = true;
+            location = new Vector2(100*x, 100*y);
+            this.texture = texture;
+
         }
 
-        public bool IsActive
-        {
-            get; set; 
-        }
-
-        public ICreatureHandler creatureHandler
-        {
-            get => handler;
-        }
+        public bool IsActive { get; set; }
 
         public UserComand CurrentComand
         {
@@ -49,9 +53,11 @@ namespace Game.creature_box
             throw new NotImplementedException();
         }
 
-        public string GetImageFileName()
+        public Texture2D Texture => texture;
+
+        public void Draw(SpriteBatch spriteBatch)
         {
-            return "Box0.png";
+            spriteBatch.Draw(Texture, Location, Color.White);
         }
     }
 }
