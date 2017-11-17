@@ -30,7 +30,7 @@ namespace NGame.creature_box
         {
             //handler = new BoxHandler();
             IsActive = true;
-            location = new Vector2(100*x, 100*y);
+            location = new Vector2(x, y);
             this.texture = texture;
 
         }

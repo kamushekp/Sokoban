@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NGame.creature_box;
@@ -24,7 +25,7 @@ namespace NGame.Logic
         public bool IsOver() => isOver;
         
 
-        public Sokoban(ContentManager content)
+        public Sokoban(GraphicsDeviceManager graphics, ContentManager content)
         {
             this.content = content;
 
@@ -33,8 +34,9 @@ namespace NGame.Logic
                 {nameof(Box), content.Load<Texture2D>("Graphics\\box0")}
             };
 
-            creator = new MapCreator(textures);
+            creator = new MapCreator(graphics, textures);
             currentMap = creator.Maps[0];
+            isOver = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)

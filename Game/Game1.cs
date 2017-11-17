@@ -34,7 +34,7 @@ namespace NGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            sokoban = new Sokoban(Content);
+            sokoban = new Sokoban(graphics, Content);
 
             base.Initialize();
         }
