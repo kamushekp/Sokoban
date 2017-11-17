@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NGame.creature_box;
+using NGame.Creatures;
 using NGame.Logic;
 
 namespace NGame.NMapCreator
@@ -40,7 +39,6 @@ namespace NGame.NMapCreator
             {
                 Maps.Add(CreateMap(file));
             }
-
         }
 
 
@@ -73,7 +71,14 @@ namespace NGame.NMapCreator
             switch (c)
             {
                 case '#':
-                return new Box(new Location(i,j), new Vector2(x, y), textures[nameof(Box)]);
+                    return new Box(new Location(i,j), new Vector2(x, y), textures[nameof(Box)]);
+
+                case 'P':
+                    return new Player(new Location(i, j), new Vector2(x, y), textures[nameof(Player)]);
+
+                case '-':
+                    return new Player(new Location(i, j), new Vector2(x, y), textures[nameof(Empty)]);
+
                 default:
                     throw new NotImplementedException();
             }

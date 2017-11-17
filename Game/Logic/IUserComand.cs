@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +7,9 @@ namespace NGame.Logic
 {
     public class UserComand
     {
-        public EventArgs Comand { get;}
-        public UserComand(EventArgs comand)
+        public KeyboardState Comand { get; }
+
+        public UserComand(KeyboardState comand)
         {
             this.Comand = comand;
         }

@@ -13,15 +13,14 @@ namespace NGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Sokoban sokoban;
-        
-        //Box box = new Box(0, 0,)
+
+        KeyboardState currentKeyboardState;
+        KeyboardState previousKeyboardState;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            
-            
         }
 
         /// <summary>
@@ -70,7 +69,10 @@ namespace NGame
                 Exit();
 
             // TODO: Add your update logic here
+            previousKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
 
+            sokoban.Update(currentKeyboardState);
             base.Update(gameTime);
         }
 

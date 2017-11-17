@@ -18,11 +18,11 @@ namespace NGame.Logic
 
         public Texture2D Texture { get; set; }
         
-        public ICreatureHandler CreatureHandler { get; set; }
+        public ACreatureHandler CreatureHandler { get; set; }
 
         public UserComand CurrentComand { get; set; }
         
-        public abstract List<UserComand> GetWhatReactingOn();
+        public abstract List<String> GetWhatReactingOn();
 
         public ACreature(Location location, Vector2 vector2, Texture2D texture)
         {
@@ -32,11 +32,6 @@ namespace NGame.Logic
             Texture = texture;
         }
 
-        public void Move(int dx, int dy)
-        {
-            Location.X += dx;
-            Location.Y += dy;
-        }
 
         public int GetDrawingPriority()
         {

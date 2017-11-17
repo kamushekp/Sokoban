@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NGame.Logic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NGame.CreaturesHandlers;
 
-namespace NGame.creature_box
+namespace NGame.Creatures
 {
     public class Box : ACreature
     {
@@ -16,9 +15,9 @@ namespace NGame.creature_box
             this.CreatureHandler = new BoxHandler();
         }
 
-        public override List<UserComand> GetWhatReactingOn()
+        public override List<String> GetWhatReactingOn()
         {
-            return new List<UserComand>();
+            return new List<String>();
         }
     }
 }
