@@ -6,6 +6,6 @@ namespace NGame.Logic
 {
     public interface ICreatureHandler
     {
-        bool ChangeGameState(Sokoban game, ICreature creature, UserComand comand);
+        bool ChangeGameState(Sokoban game, ACreature creature, UserComand comand);
     }
 }

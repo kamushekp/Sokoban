@@ -14,14 +14,12 @@ namespace NGame.Logic
     {
         private Dictionary<string, Texture2D> textures;
         private MapCreator creator;
-        private ICreature[,] currentMap;
+        private ACreature[,] currentMap;
         private ContentManager content;
         
         private bool isOver;
-        
-
-
-        public ICreature[,] CurrentMap() => currentMap;
+    
+        public ACreature[,] CurrentMap() => currentMap;
         public bool IsOver() => isOver;
         
 
