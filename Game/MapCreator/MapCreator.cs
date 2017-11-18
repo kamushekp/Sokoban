@@ -45,24 +45,31 @@ namespace NGame.NMapCreator
         {
             var rows = File.ReadAllLines(txtMap);
 
-            var isRowsSameLenght = (rows.Select(x => x.Length).All(row => row == rows[0].Length));
-            if (!isRowsSameLenght) throw new ArgumentException("Rows are not you wanted to", nameof(rows));
-
-            var colCount = rows[0].Length;
+            //TODO:переписать эту дичь
             var rowCount = rows.Length;
-            
+            var colCount = rows.Select(x => x.Length).Max();
 
-            var result = new ACreature[colCount, rowCount];
+            var withWalls = new ACreature[colCount + 2, rowCount + 2];
 
-            for (int i = 0; i < colCount; i++)
+            for (int i = 0; i < colCount + 2; i++)
             {
-                for (int j = 0; j < rowCount; j++)
+                for (int j = 0; j < rowCount + 2; j++)
                 {
-                    result[i, j] = CreateCreatureBySymbol(rows[j][i], i, j);                    
+                    if (i == 0 || i == colCount + 1 || j == 0 || j == rowCount + 1)
+                    {
+                        withWalls[i, j] = CreateCreatureBySymbol('w', i, j);
+                    }
+                    else
+                    {
+                        if (j - 1 < 0 || j - 1 > rows.Length - 1 || i - 1 < 0 || i - 1 > rows[j - 1].Length - 1)
+                            withWalls[i, j] = CreateCreatureBySymbol('w', i, j);
+                        else
+                            withWalls[i, j] = CreateCreatureBySymbol(rows[j - 1][i - 1], i, j);
+                    }
                 }
             }
 
-            return result;
+            return withWalls;
         }
 
         private ACreature CreateCreatureBySymbol(char c, int i, int j)
@@ -79,8 +86,11 @@ namespace NGame.NMapCreator
                 case '-':
                     return new Empty(new Location(i, j), textures[nameof(Empty)]);
 
+                case 'w':
+                    return new Wall(new Location(i, j), textures[nameof(Wall)]);
+
                 default:
-                    throw new ArgumentException("Error code of creature. See tutorial", nameof(c));
+                    return new Wall(new Location(i, j), textures[nameof(Wall)]);
             }
         }
     }

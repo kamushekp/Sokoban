@@ -21,7 +21,7 @@ namespace NGame.Logic
 
         private ContentManager content;
 
-        //в количествах существ
+        //высота, ширина в количествах существ
         private int height;
         private int width;
 
@@ -35,14 +35,9 @@ namespace NGame.Logic
                 throw new ArgumentNullException(nameof(loc));
             }
 
-            try
-            {
-                return CurrentMap[loc.X, loc.Y];
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new ArgumentOutOfRangeException(nameof(loc));
-            }
+            return CurrentMap[loc.X, loc.Y];
+
+
         }
         public void SetCreature(Location loc, ACreature creature)
         {
@@ -51,14 +46,9 @@ namespace NGame.Logic
                 throw new ArgumentNullException(nameof(loc));
             }
 
-            try
-            {
-                CurrentMap[loc.X, loc.Y] = creature;
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new ArgumentOutOfRangeException(nameof(loc));
-            }
+            CurrentMap[loc.X, loc.Y] = creature;
+
+            
         }
 
         public int GetHeight() => height;
@@ -98,6 +88,7 @@ namespace NGame.Logic
                 {nameof(Box), content.Load<Texture2D>("Graphics\\box0")},
                 {nameof(Empty), content.Load<Texture2D>("Graphics\\empty0")},
                 {nameof(Player), content.Load<Texture2D>("Graphics\\Char4")},
+                {nameof(Wall), content.Load<Texture2D>("Graphics\\wall0")},
             };
 
             currentTextureSize = 64;
@@ -142,7 +133,8 @@ namespace NGame.Logic
 
             foreach (var creature in currentMap)
             {
-                if (creature.GetWhatReactingOn().Contains(pressedKeys[0].ToString()))
+                if (creature is Box ||
+                    creature.GetWhatReactingOn().Contains(pressedKeys[0].ToString()))
                 {
                     creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
                 }

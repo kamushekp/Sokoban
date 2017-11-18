@@ -104,7 +104,8 @@ namespace NGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
+Matrix.CreateScale(0.5f));
 
             sokoban.Draw(spriteBatch);
 

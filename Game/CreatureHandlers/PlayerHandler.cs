@@ -29,10 +29,11 @@ namespace NGame.CreaturesHandlers
                     {
                         SwapCreatures(game, player, nextCreature);
                     }
-                player.IsActive = false;
-                }
 
-                
+                }
+                player.IsActive = false;
+
+
             }
             
         }
