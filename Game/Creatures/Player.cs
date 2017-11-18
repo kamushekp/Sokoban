@@ -10,7 +10,7 @@ namespace NGame.Creatures
 {
     class Player : ACreature
     {
-        public Player(Location location, Vector2 vector2, Texture2D texture) : base(location, vector2, texture)
+        public Player(Location location, Texture2D texture) : base(location, texture)
         {
             this.CreatureHandler = new PlayerHandler();
         }

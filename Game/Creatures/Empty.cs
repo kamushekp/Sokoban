@@ -10,13 +10,13 @@ namespace NGame.Creatures
 {
     class Empty : ACreature
     {
-        public Empty(Location location, Vector2 vector2, Texture2D texture) : base(location, vector2, texture)
+        public Empty(Location location, Texture2D texture) : base(location, texture)
         {
             this.CreatureHandler = new EmptyHandler();
         }
         public override List<string> GetWhatReactingOn()
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
     }
 }

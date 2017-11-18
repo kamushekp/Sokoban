@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NGame.Creatures;
@@ -41,21 +41,24 @@ namespace NGame.NMapCreator
             }
         }
 
-
         private ACreature[,] CreateMap(string txtMap)
         {
             var rows = File.ReadAllLines(txtMap);
-            var rowCount = rows[0].Length;
-            var colCount = rows.Length;
+
+            var isRowsSameLenght = (rows.Select(x => x.Length).All(row => row == rows[0].Length));
+            if (!isRowsSameLenght) throw new ArgumentException("Rows are not you wanted to", nameof(rows));
+
+            var colCount = rows[0].Length;
+            var rowCount = rows.Length;
             
 
-            var result = new ACreature[rowCount, colCount];
+            var result = new ACreature[colCount, rowCount];
 
-            for (int i = 0; i < rowCount; i++)
+            for (int i = 0; i < colCount; i++)
             {
-                for (int j = 0; j < colCount; j++)
+                for (int j = 0; j < rowCount; j++)
                 {
-                    result[i, j] = CreateCreatureBySymbol(rows[i][j], i, j);                    
+                    result[i, j] = CreateCreatureBySymbol(rows[j][i], i, j);                    
                 }
             }
 
@@ -65,22 +68,19 @@ namespace NGame.NMapCreator
         private ACreature CreateCreatureBySymbol(char c, int i, int j)
         {
 
-            var x = (i + 1) * textureWidth - textureWidth / 2;
-            var y = (j + 1) * textureHeight - textureHeight / 2;
-
             switch (c)
             {
                 case '#':
-                    return new Box(new Location(i,j), new Vector2(x, y), textures[nameof(Box)]);
+                    return new Box(new Location(i, j), textures[nameof(Box)]);
 
                 case 'P':
-                    return new Player(new Location(i, j), new Vector2(x, y), textures[nameof(Player)]);
+                    return new Player(new Location(i, j), textures[nameof(Player)]);
 
                 case '-':
-                    return new Player(new Location(i, j), new Vector2(x, y), textures[nameof(Empty)]);
+                    return new Empty(new Location(i, j), textures[nameof(Empty)]);
 
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentException("Error code of creature. See tutorial", nameof(c));
             }
         }
     }

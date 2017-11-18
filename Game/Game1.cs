@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using NGame.Logic;
+using System;
 
 namespace NGame
 {
@@ -17,10 +18,16 @@ namespace NGame
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
 
+        private const float TIMER = 0.1f;
+        private float timer = TIMER;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            //this.TargetElapsedTime = TimeSpan.FromSeconds(2.0f);
+            //this.IsFixedTimeStep = false;
+            
         }
 
         /// <summary>
@@ -68,12 +75,24 @@ namespace NGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+
             // TODO: Add your update logic here
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timer -= elapsed;
+
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
 
-            sokoban.Update(currentKeyboardState);
-            base.Update(gameTime);
+            if (timer < 0)
+            {
+                var pressedKeys = currentKeyboardState.GetPressedKeys();
+                if (pressedKeys.Length == 1)
+                {
+                    sokoban.Update(currentKeyboardState);
+                }
+                timer = TIMER;
+                base.Update(gameTime);
+            }
         }
 
         /// <summary>

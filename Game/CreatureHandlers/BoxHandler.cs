@@ -4,11 +4,8 @@ namespace NGame.CreaturesHandlers
 {
     public class BoxHandler : ACreatureHandler
     {
-
-        public override bool ChangeGameState(Logic.Sokoban game, ACreature creature, UserComand comand)
+        public override void ChangeGameState(Logic.Sokoban game, ACreature creature, UserComand comand)
         {
-            return true;
         }
     }
-
 }

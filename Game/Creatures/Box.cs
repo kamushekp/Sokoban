@@ -9,8 +9,7 @@ namespace NGame.Creatures
 {
     public class Box : ACreature
     {
-
-        public Box(Location loc, Vector2 vec, Texture2D texture) : base(loc, vec, texture)
+        public Box(Location loc, Texture2D texture) : base(loc, texture)
         {
             this.CreatureHandler = new BoxHandler();
         }
