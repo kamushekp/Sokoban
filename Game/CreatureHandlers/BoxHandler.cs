@@ -9,7 +9,11 @@ namespace NGame.CreaturesHandlers
     {
         public override void ChangeGameState(Sokoban game, ACreature creature, UserComand comand)
         {
-            creature.IsActive = !IsBlocked(game, creature);
+            if (creature.IsActive)
+            {
+                creature.IsActive = !IsBlocked(game, creature);
+            }
+            
         }
 
         private bool IsBlocked(Sokoban game, ACreature creature)
@@ -17,8 +21,8 @@ namespace NGame.CreaturesHandlers
             var sides = new[]
             {
                 new Location(creature.Location.X - 1, creature.Location.Y),
-                new Location(creature.Location.X + 1, creature.Location.Y),
                 new Location(creature.Location.X, creature.Location.Y - 1),
+                new Location(creature.Location.X + 1, creature.Location.Y),                
                 new Location(creature.Location.X, creature.Location.Y + 1)
             };
 

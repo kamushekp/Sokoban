@@ -10,16 +10,26 @@ using NGame.NMapCreator;
 
 namespace NGame.Logic
 {
-    public class Sokoban
+    public sealed class Sokoban
     {
-        private Dictionary<string, Texture2D> textures;
-        private MapCreator creator;
+        private ContentManager content;
 
-        //существа и их местоположения в пикселях
+        private Dictionary<string, Texture2D> textures;
+       
+        //игровые карты существ (в том числе) в creator'e
+        private MapCreator creator;
+       
+        //текущая карта существ
         private ACreature[,] currentMap;
+
+        //их местоположения в пикселях
         private Vector2[,] currentLocations;
 
-        private ContentManager content;
+        //затраченные очки хода
+        private int steps = 0;
+
+        //непогашенные цели
+        private int currentActiveTargets;
 
         //высота, ширина в количествах существ
         private int height;
@@ -39,6 +49,16 @@ namespace NGame.Logic
 
 
         }
+
+        public void DecreaseTargetNumber()
+        {
+            currentActiveTargets -= 1;
+        }
+        public bool IsMapEnd()
+        {
+            return currentActiveTargets == 0;
+        }
+
         public void SetCreature(Location loc, ACreature creature)
         {
             if (loc == null)
@@ -47,15 +67,26 @@ namespace NGame.Logic
             }
 
             CurrentMap[loc.X, loc.Y] = creature;
-
-            
+        }
+        public void SetMap(int i)
+        {
+            CurrentMap = creator.Maps[i];
+            currentActiveTargets = 0;
+            foreach(var creature in CurrentMap)
+            {
+                if (creature is Target)
+                {
+                    currentActiveTargets++;
+                }
+            }
         }
 
+        public Dictionary<string, Texture2D> Textures() => textures;
         public int GetHeight() => height;
         public int GetWidth() => width;
         public bool IsOver() => isOver;
         public int GetTextureSize() => currentTextureSize;
-
+        
         public ACreature[,] CurrentMap
         {
             get { return currentMap; }
@@ -73,7 +104,6 @@ namespace NGame.Logic
                                                              (i + 1) * currentTextureSize);
                     }
                 }
-
                 currentMap = value;
             }
         }
@@ -89,16 +119,12 @@ namespace NGame.Logic
                 {nameof(Empty), content.Load<Texture2D>("Graphics\\empty0")},
                 {nameof(Player), content.Load<Texture2D>("Graphics\\Char4")},
                 {nameof(Wall), content.Load<Texture2D>("Graphics\\wall0")},
+                {nameof(Target), content.Load<Texture2D>("Graphics\\target0")},
             };
-
             currentTextureSize = 64;
 
-            var isSizesAreSame = textures.Values.
-                SelectMany(x => new int[]{ x.Width, x.Height}).
-                All(x => x == currentTextureSize);
-            
             creator = new MapCreator(graphics, textures);
-            CurrentMap = creator.Maps[0];
+            SetMap(0);
             isOver = false;
         }
 
@@ -127,17 +153,20 @@ namespace NGame.Logic
 
         public void Update(KeyboardState currentKeyboardState)
         {
-            
             this.ReleaseCreatures(nameof(Player));
             var pressedKeys = currentKeyboardState.GetPressedKeys();
 
             foreach (var creature in currentMap)
             {
-                if (creature is Box ||
-                    creature.GetWhatReactingOn().Contains(pressedKeys[0].ToString()))
+                if (creature.CreatureHandler != null)
                 {
                     creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
                 }
+            }
+
+            if (IsMapEnd())
+            {
+                SetMap(1);
             }
         }
 

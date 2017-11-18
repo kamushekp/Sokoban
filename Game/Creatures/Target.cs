@@ -1,19 +1,17 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
-using NGame.CreaturesHandlers;
 using NGame.Logic;
-using System;
-using System.Collections.Generic;
-
 
 namespace NGame.Creatures
 {
-    class Empty : ACreature
+    class Target : ACreature
     {
-        public Empty(Location location, Texture2D texture) : base(location, texture)
+        public Target(Location loc, Texture2D texture) : base(loc, texture)
         {
             this.CreatureHandler = null;
+            this.IsActive = true;
         }
+
         public override List<string> GetWhatReactingOn()
         {
             return new List<string>();

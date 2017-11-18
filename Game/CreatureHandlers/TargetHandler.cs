@@ -1,11 +1,13 @@
-﻿using NGame.Logic;
+﻿
+using NGame.Logic;
 
-namespace NGame.CreaturesHandlers
+namespace NGame.CreatureHandlers
 {
-    class EmptyHandler : ACreatureHandler
+    class TargetHandler : ACreatureHandler
     {
         public override void ChangeGameState(Sokoban game, ACreature creature, UserComand comand)
         {
+
         }
     }
 }

@@ -89,6 +89,9 @@ namespace NGame.NMapCreator
                 case 'w':
                     return new Wall(new Location(i, j), textures[nameof(Wall)]);
 
+                case 't':
+                    return new Target(new Location(i, j), textures[nameof(Target)]);
+
                 default:
                     return new Wall(new Location(i, j), textures[nameof(Wall)]);
             }

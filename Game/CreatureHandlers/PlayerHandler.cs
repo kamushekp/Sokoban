@@ -18,11 +18,23 @@ namespace NGame.CreaturesHandlers
 
                 if (nextLocation != nextnextLocation)
                 {
-                    if (nextCreature is Box && nextnextCreature is Empty)
+                    if (nextCreature is Box && nextCreature.IsActive)
                     {
-                        SwapCreatures(game, nextCreature, nextnextCreature);
-                        SwapCreatures(game, player, nextnextCreature);
-                        
+                        if (nextnextCreature is Empty)
+                        {
+                            SwapCreatures(game, nextCreature, nextnextCreature);
+                            SwapCreatures(game, player, nextnextCreature);
+                        }
+
+                        else if (nextnextCreature is Target)
+                        {
+                            nextnextCreature.IsActive = false;
+                            nextCreature.IsActive = false;
+                            game.DecreaseTargetNumber();
+
+                            SwapCreatures(game, nextCreature, nextnextCreature);
+                            SwapCreatures(game, player, new Empty(nextnextCreature.Location, game.Textures()[nameof(Empty)]));
+                        }
                     }
 
                     if (nextCreature is Empty)
@@ -32,10 +44,7 @@ namespace NGame.CreaturesHandlers
 
                 }
                 player.IsActive = false;
-
-
             }
-            
         }
 
         private void SwapCreatures(Sokoban game, ACreature first, ACreature second)
