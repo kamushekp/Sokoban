@@ -112,9 +112,7 @@ Matrix.CreateScale(0.5f));
             spriteBatch.End();
 
             base.Draw(gameTime);
-            
-            
-            
+             
         }
     }
 }

@@ -19,5 +19,10 @@ namespace NGame.Creatures
         {
             return new List<string> { "Up", "Down", "Left", "Right" };
         }
+
+        public override int GetDrawingPriority()
+        {
+            return 10;
+        }
     }
 }

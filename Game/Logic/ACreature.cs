@@ -8,6 +8,8 @@ namespace NGame.Logic
 {
     public abstract class ACreature
     {
+        public Animation CreatureAnimation;
+
         public bool IsActive { get; set; }
         
         //положение по матрице объектов
@@ -28,16 +30,11 @@ namespace NGame.Logic
             Texture = texture;
         }
 
-        public int GetDrawingPriority()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract int GetDrawingPriority();
 
         public void Draw(SpriteBatch spriteBatch, Vector2 PixLocation)
         {
             spriteBatch.Draw(Texture, PixLocation, Color.White);
         }
-
-
     }
 }

@@ -37,6 +37,7 @@ namespace NGame.Logic
 
         private bool isOver;
         private int currentTextureSize;
+        public List<ACreature> AdditionalObjects { get; set; }
 
         public ACreature GetCreature(Location loc)
         {
@@ -46,7 +47,6 @@ namespace NGame.Logic
             }
 
             return CurrentMap[loc.X, loc.Y];
-
 
         }
 
@@ -59,6 +59,10 @@ namespace NGame.Logic
             return currentActiveTargets == 0;
         }
 
+        public void RemoveCreature(Location loc)
+        {
+            CurrentMap[loc.X, loc.Y] = null;
+        }
         public void SetCreature(Location loc, ACreature creature)
         {
             if (loc == null)
@@ -67,6 +71,12 @@ namespace NGame.Logic
             }
 
             CurrentMap[loc.X, loc.Y] = creature;
+            creature.Location = loc;
+        }
+        public void MoveCreature(Location finish, ACreature creature)
+        {
+            RemoveCreature(creature.Location);
+            SetCreature(finish, creature);            
         }
         public void SetMap(int i)
         {
@@ -108,7 +118,6 @@ namespace NGame.Logic
             }
         }
         
-
         public Sokoban(GraphicsDeviceManager graphics, ContentManager content)
         {
             this.content = content;
@@ -116,7 +125,7 @@ namespace NGame.Logic
             textures = new Dictionary<string, Texture2D>
             {
                 {nameof(Box), content.Load<Texture2D>("Graphics\\box0")},
-                {nameof(Empty), content.Load<Texture2D>("Graphics\\empty0")},
+                //{nameof(Empty), content.Load<Texture2D>("Graphics\\empty0")},
                 {nameof(Player), content.Load<Texture2D>("Graphics\\Char4")},
                 {nameof(Wall), content.Load<Texture2D>("Graphics\\wall0")},
                 {nameof(Target), content.Load<Texture2D>("Graphics\\target0")},
@@ -126,13 +135,14 @@ namespace NGame.Logic
             creator = new MapCreator(graphics, textures);
             SetMap(0);
             isOver = false;
+            AdditionalObjects = new List<ACreature>();
         }
 
         public void ReleaseCreatures(params string[] creatures)
         {
             foreach(var creature in this.currentMap)
             {
-                if (creatures.Contains(creature.GetType().Name))
+                if (creature != null && creatures.Contains(creature.GetType().Name))
                 {
                     creature.IsActive = true;
                 }
@@ -142,11 +152,19 @@ namespace NGame.Logic
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            foreach (var creature in AdditionalObjects)
+            {
+                creature.Draw(spriteBatch, currentLocations[creature.Location.X, creature.Location.Y]);
+            }
+
             for (int i = 0; i < GetHeight(); i++)
             {
                 for (int j = 0; j < GetWidth(); j++)
                 {
-                    currentMap[j, i].Draw(spriteBatch, currentLocations[j, i]);
+                    if (currentMap[j, i] != null)
+                    {
+                        currentMap[j, i].Draw(spriteBatch, currentLocations[j, i]);
+                    }
                 }
             }
         }
@@ -158,10 +176,15 @@ namespace NGame.Logic
 
             foreach (var creature in currentMap)
             {
-                if (creature.CreatureHandler != null)
+                if (creature!= null && creature.CreatureHandler != null)
                 {
                     creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
                 }
+            }
+
+            foreach (var creature in AdditionalObjects)
+            {
+                creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
             }
 
             if (IsMapEnd())

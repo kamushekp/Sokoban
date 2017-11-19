@@ -83,8 +83,6 @@ namespace NGame.NMapCreator
                 case 'P':
                     return new Player(new Location(i, j), textures[nameof(Player)]);
 
-                case '-':
-                    return new Empty(new Location(i, j), textures[nameof(Empty)]);
 
                 case 'w':
                     return new Wall(new Location(i, j), textures[nameof(Wall)]);
@@ -93,7 +91,7 @@ namespace NGame.NMapCreator
                     return new Target(new Location(i, j), textures[nameof(Target)]);
 
                 default:
-                    return new Wall(new Location(i, j), textures[nameof(Wall)]);
+                    return null;
             }
         }
     }

@@ -14,6 +14,11 @@ namespace NGame.Creatures
             this.CreatureHandler = new BoxHandler();
         }
 
+        public override int GetDrawingPriority()
+        {
+            return 10;
+        }
+
         public override List<String> GetWhatReactingOn()
         {
             return new List<String>();
