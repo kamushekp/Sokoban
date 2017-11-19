@@ -9,7 +9,7 @@ namespace NGame.CreaturesHandlers
     {
         public override void ChangeGameState(Sokoban game, ACreature creature, UserComand comand)
         {
-            if (creature.IsActive)
+            
             {
                 creature.IsActive = !IsBlocked(game, creature);
             }

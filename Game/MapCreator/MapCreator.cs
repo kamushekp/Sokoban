@@ -16,6 +16,7 @@ namespace NGame.NMapCreator
         private int textureWidth;
         private int textureHeight;
 
+        public Rectangle CurrentMapRectangle { get; set; }
         public List<ACreature[,]> Maps { get; }
  
         public MapCreator(GraphicsDeviceManager graphics, Dictionary<string, Texture2D> textures)
@@ -28,6 +29,7 @@ namespace NGame.NMapCreator
             this.textures = textures;
 
             Maps = new List<ACreature[,]>();
+            
             CreateWorld();
         }
 

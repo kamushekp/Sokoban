@@ -15,6 +15,10 @@ namespace NGame.Logic
         private ContentManager content;
 
         private Dictionary<string, Texture2D> textures;
+        private int windowHeight;
+        private int windowWidth;
+
+        private Texture2D[] backgrounds;
        
         //игровые карты существ (в том числе) в creator'e
         private MapCreator creator;
@@ -82,6 +86,7 @@ namespace NGame.Logic
         {
             CurrentMap = creator.Maps[i];
             currentActiveTargets = 0;
+
             foreach(var creature in CurrentMap)
             {
                 if (creature is Target)
@@ -89,6 +94,20 @@ namespace NGame.Logic
                     currentActiveTargets++;
                 }
             }
+
+            var mapWidth = CurrentMap.GetLength(0) * currentTextureSize;
+            var mapHeight = CurrentMap.GetLength(1) * currentTextureSize;
+
+            creator.CurrentMapRectangle = new Rectangle(
+                (int)currentLocations[0, 0].X, (int)currentLocations[0, 0].Y,
+                 mapWidth, mapHeight);
+
+            DrawMultiplier = Math.Min(windowWidth / mapWidth, windowHeight / mapHeight);
+
+        }
+        public Rectangle GetCurrentMapRectangle()
+        {
+            return creator.CurrentMapRectangle;
         }
 
         public Dictionary<string, Texture2D> Textures() => textures;
@@ -96,7 +115,13 @@ namespace NGame.Logic
         public int GetWidth() => width;
         public bool IsOver() => isOver;
         public int GetTextureSize() => currentTextureSize;
-        
+        public Texture2D GetBackground(int i)
+        {
+            return backgrounds[i];
+        }
+
+        public float DrawMultiplier { get; set; }
+
         public ACreature[,] CurrentMap
         {
             get { return currentMap; }
@@ -133,12 +158,17 @@ namespace NGame.Logic
                 {nameof(Target), content.Load<Texture2D>("Graphics\\target0")},
             };
 
+            backgrounds = new Texture2D[] { content.Load<Texture2D>("Graphics\\box0") };
+           
             foreach (var file in content.RootDirectory)
             {
                 Console.WriteLine(file);
             }
 
             currentTextureSize = 64;
+
+            windowHeight = graphics.PreferredBackBufferHeight;
+            windowWidth = graphics.PreferredBackBufferWidth;
 
             creator = new MapCreator(graphics, textures);
             SetMap(0);
@@ -186,6 +216,7 @@ namespace NGame.Logic
                 if (creature!= null && creature.CreatureHandler != null)
                 {
                     creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
+
                     if (creature.CurrentAnimation != null)
                     {
                         creature.CurrentAnimation.Position = new Vector2(
