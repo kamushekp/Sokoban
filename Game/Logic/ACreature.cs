@@ -8,7 +8,8 @@ namespace NGame.Logic
 {
     public abstract class ACreature
     {
-        public Animation CreatureAnimation;
+        public Animation CurrentAnimation;
+        public Dictionary<string, Animation> Animations;
 
         public bool IsActive { get; set; }
         
@@ -29,12 +30,18 @@ namespace NGame.Logic
             Location = location;
             Texture = texture;
         }
-
+        
         public abstract int GetDrawingPriority();
 
         public void Draw(SpriteBatch spriteBatch, Vector2 PixLocation)
         {
-            spriteBatch.Draw(Texture, PixLocation, Color.White);
+            if (CurrentAnimation == null)
+                spriteBatch.Draw(Texture, PixLocation, Color.White);
+            else
+            {
+                CurrentAnimation.Draw(spriteBatch);
+            }
+                
         }
     }
 }

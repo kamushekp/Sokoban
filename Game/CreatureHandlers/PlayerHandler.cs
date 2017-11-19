@@ -1,4 +1,5 @@
-﻿using NGame.Creatures;
+﻿using Microsoft.Xna.Framework.Input;
+using NGame.Creatures;
 using NGame.Logic;
 
 
@@ -8,6 +9,7 @@ namespace NGame.CreaturesHandlers
     {
         public override void ChangeGameState(Sokoban game, ACreature player, UserComand comand)
         {
+            HandleAnimations(player, comand);
             if (player.IsActive)
             {
                 var nextLocation = GetNewLoc(game, player.Location, comand);
@@ -51,6 +53,16 @@ namespace NGame.CreaturesHandlers
                 }
                 player.IsActive = false;
             }
+        }
+
+        private void HandleAnimations(ACreature player, UserComand comand)
+        {
+            var button = comand.Comand.GetPressedKeys()[0].ToString();
+            if (button == "Right" || button == "Left" || button == "Up" || button == "Down")
+            {
+                player.CurrentAnimation = player.Animations[button];
+            }
+            
         }
     }
 }

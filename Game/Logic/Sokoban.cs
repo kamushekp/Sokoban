@@ -125,11 +125,19 @@ namespace NGame.Logic
             textures = new Dictionary<string, Texture2D>
             {
                 {nameof(Box), content.Load<Texture2D>("Graphics\\box0")},
-                //{nameof(Empty), content.Load<Texture2D>("Graphics\\empty0")},
-                {nameof(Player), content.Load<Texture2D>("Graphics\\Char4")},
+                {"Left", content.Load<Texture2D>("Graphics\\char\\left")},
+                {"Right", content.Load<Texture2D>("Graphics\\char\\right")},
+                {"Up", content.Load<Texture2D>("Graphics\\char\\direct")},
+                {"Down", content.Load<Texture2D>("Graphics\\char\\back")},
                 {nameof(Wall), content.Load<Texture2D>("Graphics\\wall0")},
                 {nameof(Target), content.Load<Texture2D>("Graphics\\target0")},
             };
+
+            foreach (var file in content.RootDirectory)
+            {
+                Console.WriteLine(file);
+            }
+
             currentTextureSize = 64;
 
             creator = new MapCreator(graphics, textures);
@@ -146,7 +154,6 @@ namespace NGame.Logic
                 {
                     creature.IsActive = true;
                 }
-                
             }
         }
 
@@ -169,7 +176,7 @@ namespace NGame.Logic
             }
         }
 
-        public void Update(KeyboardState currentKeyboardState)
+        public void Update(KeyboardState currentKeyboardState, GameTime gameTime)
         {
             this.ReleaseCreatures(nameof(Player));
             var pressedKeys = currentKeyboardState.GetPressedKeys();
@@ -179,6 +186,13 @@ namespace NGame.Logic
                 if (creature!= null && creature.CreatureHandler != null)
                 {
                     creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
+                    if (creature.CurrentAnimation != null)
+                    {
+                        creature.CurrentAnimation.Position = new Vector2(
+                                        currentLocations[creature.Location.X, creature.Location.Y].X + 32,
+                                        currentLocations[creature.Location.X, creature.Location.Y].Y + 32);
+                        creature.CurrentAnimation.Update(gameTime);
+                    }
                 }
             }
 
@@ -191,6 +205,8 @@ namespace NGame.Logic
             {
                 SetMap(1);
             }
+
+            
         }
 
     }

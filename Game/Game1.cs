@@ -88,7 +88,7 @@ namespace NGame
                 var pressedKeys = currentKeyboardState.GetPressedKeys();
                 if (pressedKeys.Length == 1)
                 {
-                    sokoban.Update(currentKeyboardState);
+                    sokoban.Update(currentKeyboardState, gameTime);
                 }
                 timer = TIMER;
                 base.Update(gameTime);

@@ -81,7 +81,14 @@ namespace NGame.NMapCreator
                     return new Box(new Location(i, j), textures[nameof(Box)]);
 
                 case 'P':
-                    return new Player(new Location(i, j), textures[nameof(Player)]);
+                    return new Player(new Location(i, j), 
+                        new Dictionary<string, Texture2D>
+                        {
+                            { "Left", textures["Left"] },
+                            { "Right", textures["Right"] },
+                            { "Up", textures["Up"] },
+                            { "Down", textures["Down"] }
+                        });
 
 
                 case 'w':
