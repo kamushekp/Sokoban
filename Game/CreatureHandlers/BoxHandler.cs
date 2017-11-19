@@ -7,13 +7,10 @@ namespace NGame.CreaturesHandlers
 {
     public class BoxHandler : ACreatureHandler
     {
-        public override void ChangeGameState(Sokoban game, ACreature creature, UserComand comand)
+        public override Location ChangeGameState(Sokoban game, ACreature creature, UserComand comand)
         {
-            
-            {
-                creature.IsActive = !IsBlocked(game, creature);
-            }
-            
+            creature.IsActive = !IsBlocked(game, creature);
+            return null;
         }
 
         private bool IsBlocked(Sokoban game, ACreature creature)

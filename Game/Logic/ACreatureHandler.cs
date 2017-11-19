@@ -5,7 +5,7 @@ namespace NGame.Logic
 {
     public abstract class ACreatureHandler
     {
-        public abstract void ChangeGameState(Sokoban game, ACreature creature, UserComand comand);
+        public abstract Location ChangeGameState(Sokoban game, ACreature creature, UserComand comand);
 
         //возвращает новую локацию объекта (но не сдвигает объект!)
         public Location GetNewLoc(Sokoban game, Location location, UserComand comand)

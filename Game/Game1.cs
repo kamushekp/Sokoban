@@ -6,9 +6,7 @@ using System;
 
 namespace NGame
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
+
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -25,8 +23,6 @@ namespace NGame
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            //this.TargetElapsedTime = TimeSpan.FromSeconds(2.0f);
-            //this.IsFixedTimeStep = false;
             
         }
 
@@ -47,11 +43,10 @@ namespace NGame
        
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
-            // TODO: Add your update logic here
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             timer -= elapsed;
 
@@ -76,6 +71,7 @@ namespace NGame
 
             spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
                 Matrix.CreateScale(sokoban.DrawMultiplier));
+
             spriteBatch.Draw(sokoban.GetBackground(0), sokoban.GetCurrentMapRectangle(), Color.White);
 
             sokoban.Draw(spriteBatch);

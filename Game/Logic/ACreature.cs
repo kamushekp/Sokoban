@@ -8,6 +8,8 @@ namespace NGame.Logic
 {
     public abstract class ACreature
     {
+        public int Counter { get; set; }
+
         public Animation CurrentAnimation;
         public Dictionary<string, Animation> Animations;
 

@@ -10,24 +10,14 @@ using NGame.NMapCreator;
 
 namespace NGame.Logic
 {
-    public sealed class Sokoban
+    public sealed partial class Sokoban
     {
-        private ContentManager content;
-
-        private Dictionary<string, Texture2D> textures;
-        private int windowHeight;
-        private int windowWidth;
-
-        private Texture2D[] backgrounds;
-       
+        
         //игровые карты существ (в том числе) в creator'e
         private MapCreator creator;
        
         //текущая карта существ
         private ACreature[,] currentMap;
-
-        //их местоположения в пикселях
-        private Vector2[,] currentLocations;
 
         //затраченные очки хода
         private int steps = 0;
@@ -40,7 +30,7 @@ namespace NGame.Logic
         private int width;
 
         private bool isOver;
-        private int currentTextureSize;
+        
         public List<ACreature> AdditionalObjects { get; set; }
 
         public ACreature GetCreature(Location loc)
@@ -102,7 +92,7 @@ namespace NGame.Logic
                 (int)currentLocations[0, 0].X, (int)currentLocations[0, 0].Y,
                  mapWidth, mapHeight);
 
-            DrawMultiplier = Math.Min(windowWidth / mapWidth, windowHeight / mapHeight);
+            DrawMultiplier = Math.Min((float)windowWidth / mapWidth, (float)windowHeight / mapHeight);
 
         }
         public Rectangle GetCurrentMapRectangle()
@@ -135,8 +125,8 @@ namespace NGame.Logic
                 {
                     for (int j = 0; j < width; j++)
                     {
-                        currentLocations[j, i] = new Vector2((j + 1) * currentTextureSize,
-                                                             (i + 1) * currentTextureSize);
+                        currentLocations[j, i] = new Vector2((j) * currentTextureSize,
+                                                             (i) * currentTextureSize);
                     }
                 }
                 currentMap = value;
@@ -215,13 +205,17 @@ namespace NGame.Logic
             {
                 if (creature!= null && creature.CreatureHandler != null)
                 {
-                    creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
+                    var dLocation = creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
 
                     if (creature.CurrentAnimation != null)
                     {
-                        creature.CurrentAnimation.Position = new Vector2(
-                                        currentLocations[creature.Location.X, creature.Location.Y].X + 32,
-                                        currentLocations[creature.Location.X, creature.Location.Y].Y + 32);
+                        creature.CurrentAnimation.Position = 
+                        new Vector2
+                        (
+                        currentLocations[creature.Location.X, creature.Location.Y].X + currentTextureSize / 2,
+                        currentLocations[creature.Location.X, creature.Location.Y].Y + currentTextureSize / 2
+                        );
+
                         creature.CurrentAnimation.Update(gameTime);
                     }
                 }
@@ -236,7 +230,6 @@ namespace NGame.Logic
             {
                 SetMap(1);
             }
-
             
         }
 

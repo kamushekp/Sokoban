@@ -21,6 +21,12 @@ namespace NGame.Logic
             Y = loc.Y;
         }
 
+        public Location Sub(Location loc)
+        {
+            var sub = new Location(X - loc.X, Y - loc.Y);
+            return sub;
+        }
+
         public int CompareTo(object obj)
         {
             var loc = (Location)obj;
