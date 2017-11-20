@@ -5,20 +5,15 @@ using Microsoft.Xna.Framework.Input;
 using NGame.Logic;
 using System;
 using System.Collections.Generic;
+using NGame;
 
 namespace NGame.MenuControling
 {
-    public class SokobanMenu
+
+
+    public class SokobanMenu : IPage
     {
         public GraphicsDeviceManager Device { get; set; }
-
-        private enum buttons
-            {
-            menu = 0,
-            play = 1,
-            best = 2,
-            maps = 3,
-        }
         private const int buttonsCount = 3;
         private int currentButton;
 
@@ -28,6 +23,7 @@ namespace NGame.MenuControling
         public Texture2D[] Buttons { get; set; }
         public Rectangle[] ButtonsRects { get; set; }
         public Color[] ButtonsColors { get; set; }
+
         public int CurrentButton
         {
             get { return currentButton; }
@@ -46,9 +42,9 @@ namespace NGame.MenuControling
             ButtonsRects = new Rectangle[buttonsCount];
             ButtonsColors = new Color[buttonsCount];
 
-            Buttons[(int)buttons.play - 1] = content.Load<Texture2D>("Graphics\\MainMenu\\start");
-            Buttons[(int)buttons.best - 1] = content.Load<Texture2D>("Graphics\\MainMenu\\best");
-            Buttons[(int)buttons.maps - 1] = content.Load<Texture2D>("Graphics\\MainMenu\\Maps");
+            Buttons[0] = content.Load<Texture2D>("Graphics\\MainMenu\\start");
+            Buttons[1] = content.Load<Texture2D>("Graphics\\MainMenu\\best");
+            Buttons[2] = content.Load<Texture2D>("Graphics\\MainMenu\\Maps");
 
             var x = (Device.PreferredBackBufferWidth - buttonWidth) / 5;
             var y = (Device.PreferredBackBufferHeight- buttonsCount * buttonHeight -
@@ -61,7 +57,7 @@ namespace NGame.MenuControling
                     y += buttonHeight;
             }
         }
-
+            
         public void Draw(SpriteBatch spriteBatch)
         {
             for (int i = 0; i < buttonsCount; i++)
@@ -80,14 +76,16 @@ namespace NGame.MenuControling
             {
                 ChangeCurrentButton(cmd);
                 if (cmd == Keys.Enter)
-                    return (int)buttons.play;
+                {
+                    return currentButton + 1;
+                }
             }
             
 
             for (int i = 0; i < buttonsCount; i++)
                 ButtonsColors[i] = (i != CurrentButton ? Color.White : Color.Red);
 
-            return 0;
+            return (int)GameState.menu;
         }
 
         private void ChangeCurrentButton(Keys key)
@@ -106,15 +104,104 @@ namespace NGame.MenuControling
                     break;
             }
         }
-
     }
 
-    public class NewGame
+    public class InputName : IPage
     {
+        
+        private Texture2D texture;
+        private GraphicsDeviceManager Device;
+        private string inputtedName;
 
+        public string GetName() => inputtedName;
+
+        public InputName(ContentManager content, GraphicsDeviceManager device)
+        {
+            Device = device;
+            texture = content.Load<Texture2D>("Graphics\\Menus\\input");
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw
+                (
+                texture,
+                new Rectangle(0, 0, Device.PreferredBackBufferWidth, Device.PreferredBackBufferHeight),
+                Color.White
+                );
+        }
+
+        public int Update(KeyboardState currentKeyboardState)
+        {
+
+            if (inputtedName != null &&inputtedName.Length >= 4 && currentKeyboardState.IsKeyDown(Keys.Enter))
+            {
+                return (int)GameState.nameInputted;
+                
+            }
+
+            inputtedName += currentKeyboardState.GetPressedKeys()[0];
+            return (int)GameState.inputtingName;
+        }
     }
+
     public class ShowFiveBest
     {
+        public GraphicsDeviceManager Device { get; set; }
+        public List<Tuple<int, string>> TopFive;
+        private SpriteFont font;
 
+        public ShowFiveBest(ContentManager content, GraphicsDeviceManager device, List<Tuple<int, string>> topFive)
+        {
+            TopFive = topFive;
+            var dir = Environment.CurrentDirectory;
+            var pathToStats = dir.Substring(0, dir.LastIndexOf("Game") + 4) + "\\";
+            font = content.Load<SpriteFont>("Score");
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            var x = 100;
+            var y = 100;
+            foreach (var elem in TopFive)
+            {
+                spriteBatch.DrawString(font, String.Format("Player {0}: {1} steps to win", elem.Item2, elem.Item1), new Vector2(x, y), Color.Black);
+                y += 50;
+            }
+
+        }
+
+        public int Update(KeyboardState currentKeyboardState)
+        {
+            return (int)GameState.menu;
+        }
+
+    }
+
+    public class Congrats : IPage
+    {
+        private Texture2D texture;
+        private GraphicsDeviceManager device;
+
+        public Congrats(ContentManager content, GraphicsDeviceManager device)
+        {
+            this.device = device;
+            texture = content.Load<Texture2D>("Graphics\\Menus\\win");
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw
+                (
+                texture,
+                new Rectangle(0, 0, device.PreferredBackBufferWidth, device.PreferredBackBufferHeight),
+                Color.White
+                );
+        }
+
+        public int Update(KeyboardState currentKeyboardState)
+        {
+            return (int)GameState.menu;
+        }
     }
 }

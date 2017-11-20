@@ -176,7 +176,11 @@ namespace NGame.Logic
 
             if (IsMapEnd())
             {
-                SetMap(1);
+                var isGameEnd = NextMap();
+                if (isGameEnd)
+                {
+                    return steps;
+                }
             }
 
             return -1;

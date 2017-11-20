@@ -30,6 +30,8 @@ namespace NGame.Logic
             return creator.CurrentMapRectangle;
         }
 
+        private int lvlNumber = 0;
+
         public Dictionary<string, Texture2D> Textures() => textures;
 
         public int GetTextureSize() => currentTextureSize;
@@ -82,6 +84,21 @@ namespace NGame.Logic
 
             DrawMultiplier = Math.Min((float)windowWidth / mapWidth, (float)windowHeight / mapHeight);
 
+        }
+
+        public bool NextMap()
+        {
+            lvlNumber++;
+
+            if (creator.Maps.Count == lvlNumber)
+            {
+                return true;
+            }
+            else
+            {
+                SetMap(lvlNumber);
+                return false;
+            }
         }
     }
 }

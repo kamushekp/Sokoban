@@ -9,15 +9,32 @@ using System.IO;
 
 namespace NGame
 {
+    enum GameState
+    {
+        menu = 0,
+        inputtingName = 1,
+        showingBest = 2,
+        maps = 3,
+        playing = 4,
+        congrats = 5,
+        nameInputted = 7
+
+    }
+
 
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public SortedDictionary<int, string> TopFive { get; set; }
+        public List<Tuple<int, string>> TopFive { get; set; }
+
+        ShowFiveBest showFiveBest;
         SokobanMenu sokobanMenu;
         Sokoban sokoban;
+        InputName inputName;
+        Congrats congrats;
+
         private string playerName;
 
         KeyboardState currentKeyboardState;
@@ -28,22 +45,15 @@ namespace NGame
 
         private int gameState;
 
-        private enum GameState
-        {
-            menu = 0,
-            playerName = 1,
-            best = 2,
-            maps = 3,
-            play = 4
 
-        }
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             gameState = (int)GameState.menu;
-            TopFive = new SortedDictionary<int, string>();
+
+            TopFive = new List<Tuple<int, string>>();
             LoadBestPlayers();
         }
 
@@ -51,6 +61,9 @@ namespace NGame
         {
             sokobanMenu = new SokobanMenu(Content, graphics);
             sokoban = new Sokoban(graphics, Content);
+            showFiveBest = new ShowFiveBest(Content, graphics, TopFive);
+            inputName = new InputName(Content, graphics);
+            congrats = new Congrats(Content, graphics);
 
             base.Initialize();
 
@@ -68,9 +81,11 @@ namespace NGame
        
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                SaveBestPlayers();
                 Exit();
+            }
 
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             timer -= elapsed;
@@ -81,12 +96,18 @@ namespace NGame
             if (timer < 0)
             {
                 var pressedKeys = currentKeyboardState.GetPressedKeys();
+
                 if (pressedKeys.Length == 1)
                 {
-                    if (gameState == (int)GameState.playerName)
+                    if (gameState == (int)GameState.inputtingName)
                     {
-                        playerName = "Pasha";
-                        gameState = (int)GameState.play;
+                        gameState = inputName.Update(currentKeyboardState);
+                    }
+
+                    if (gameState == (int)GameState.nameInputted)
+                    {
+                        playerName = inputName.GetName();
+                        gameState = (int)GameState.playing;
                     }
 
                     else if (gameState == (int)GameState.menu)
@@ -94,10 +115,26 @@ namespace NGame
                         gameState = sokobanMenu.Update(currentKeyboardState);
                     }
 
-                    else if (gameState == (int)GameState.play)
+                    else if (gameState == (int)GameState.playing)
                     {
                         var scores = sokoban.Update(currentKeyboardState, gameTime);
                         HandleScores(scores);
+
+                        if (scores != -1)
+                        {
+                            gameState = (int)GameState.congrats;
+                        }
+                    }
+
+                    else if (gameState == (int)GameState.showingBest)
+                    {
+                        gameState = showFiveBest.Update(currentKeyboardState);
+                    }
+
+                    else if (gameState == (int)GameState.congrats)
+                    {
+                        SaveBestPlayers();
+                        gameState = congrats.Update(currentKeyboardState);
                     }
                 }
                 timer = TIMER;
@@ -109,7 +146,7 @@ namespace NGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            if (gameState == (int)GameState.play)
+            if (gameState == (int)GameState.playing)
             {
                 spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
                     Matrix.CreateScale(sokoban.DrawMultiplier));
@@ -130,29 +167,59 @@ namespace NGame
 
                 spriteBatch.End();
             }
-           
+
+            else if (gameState == (int)GameState.showingBest)
+            {
+                spriteBatch.Begin();
+
+                showFiveBest.Draw(spriteBatch);
+
+                spriteBatch.End();
+
+            }
+
+            else if (gameState == (int)GameState.inputtingName)
+            {
+                spriteBatch.Begin();
+
+                inputName.Draw(spriteBatch);
+
+                spriteBatch.End();
+            }
+
+            else if (gameState == (int)GameState.congrats)
+            {
+                spriteBatch.Begin();
+
+                congrats.Draw(spriteBatch);
+
+                spriteBatch.End();
+            }
+
             base.Draw(gameTime);
              
         }
 
         private void HandleScores(int scores)
         {
-            var keys = new List<int>();
+            var keys = new List<Tuple<int, string>>();
 
-            if (scores == -1)
+            if (scores != -1)
             {
-                TopFive.Add(scores, playerName);
-                var slice = new SortedDictionary<int, string>();
+                TopFive.Add(new Tuple<int, string>(scores, playerName));
+                TopFive.Sort();
+                var slice = new List<Tuple<int, string>>();
                 int i = 0;
 
-                foreach(var elem in slice)
+                foreach(var elem in TopFive)
                 {
-                    slice.Add(elem.Key, elem.Value);
+                    slice.Add(elem);
                     i++;
                     if (i == 5)break;
                 }
 
                 TopFive = slice;
+                
             }
             }
 
@@ -167,8 +234,21 @@ namespace NGame
                 var splitted = row.Split();
                 int.TryParse(splitted[1], out int score);
 
-                TopFive.Add(score, splitted[0]);
+                TopFive.Add(new Tuple<int, string>(score, splitted[0]));
             }
+        }
+        private void SaveBestPlayers()
+        {
+            var dir = Environment.CurrentDirectory;
+            var pathToStats = dir.Substring(0, dir.LastIndexOf("Game") + 4) + "\\Stats\\stats.txt";
+            var gameInfo = new List<string>();
+
+            foreach (var elem in TopFive)
+            {
+                gameInfo.Add(String.Format("{0} {1}", elem.Item2, elem.Item1));
+            }
+
+            File.WriteAllLines(pathToStats, gameInfo);
         }
     }
 }
