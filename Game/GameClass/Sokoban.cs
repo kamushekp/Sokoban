@@ -29,8 +29,46 @@ namespace NGame.Logic
         private int width;
 
         private bool isOver;
-        
+
+        public int GetHeight() => height;
+        public int GetWidth() => width;
+        public bool IsOver() => isOver;
+
         public List<ACreature> AdditionalObjects { get; set; }
+
+        public Sokoban(ContentManager content, GraphicsDeviceManager graphics)
+        {
+            this.content = content;
+
+            font = content.Load<SpriteFont>("Score");
+            textures = new Dictionary<string, Texture2D>
+            {
+                {nameof(Box), content.Load<Texture2D>("Graphics\\box0")},
+                {"Left", content.Load<Texture2D>("Graphics\\char\\left")},
+                {"Right", content.Load<Texture2D>("Graphics\\char\\right")},
+                {"Up", content.Load<Texture2D>("Graphics\\char\\direct")},
+                {"Down", content.Load<Texture2D>("Graphics\\char\\back")},
+                {nameof(Wall), content.Load<Texture2D>("Graphics\\wall0")},
+                {nameof(Target), content.Load<Texture2D>("Graphics\\target0")},
+            };
+
+            backgrounds = new Texture2D[] { content.Load<Texture2D>("Graphics\\box0") };
+
+            foreach (var file in content.RootDirectory)
+            {
+                Console.WriteLine(file);
+            }
+
+            currentTextureSize = 64;
+
+            windowHeight = graphics.PreferredBackBufferHeight;
+            windowWidth = graphics.PreferredBackBufferWidth;
+
+            creator = new MapCreator(graphics, textures);
+            SetMap(0);
+            isOver = false;
+            AdditionalObjects = new List<ACreature>();
+        }
 
         public ACreature GetCreature(Location loc)
         {
@@ -47,12 +85,27 @@ namespace NGame.Logic
         {
             currentActiveTargets -= 1;
         }
+
         public bool IsMapEnd()
         {
             return currentActiveTargets == 0;
         }
 
-        public void RemoveCreature(Location loc)
+        public bool IsMapBlocked()
+        {
+            var blocked = true;
+            foreach (var creature in CurrentMap)
+            {
+                if (creature is Box && creature.IsActive)
+                {
+                    blocked = false;
+                    break;
+                }
+            }
+            return blocked;
+        }
+
+        public void DeleteCreature(Location loc)
         {
             CurrentMap[loc.X, loc.Y] = null;
         }
@@ -68,13 +121,9 @@ namespace NGame.Logic
         }
         public void MoveCreature(Location finish, ACreature creature)
         {
-            RemoveCreature(creature.Location);
+            DeleteCreature(creature.Location);
             SetCreature(finish, creature);            
         }
-
-        public int GetHeight() => height;
-        public int GetWidth() => width;
-        public bool IsOver() => isOver;
 
         public ACreature[,] CurrentMap
         {
@@ -97,38 +146,7 @@ namespace NGame.Logic
             }
         }
         
-        public Sokoban(GraphicsDeviceManager graphics, ContentManager content)
-        {
-            this.content = content;
 
-            textures = new Dictionary<string, Texture2D>
-            {
-                {nameof(Box), content.Load<Texture2D>("Graphics\\box0")},
-                {"Left", content.Load<Texture2D>("Graphics\\char\\left")},
-                {"Right", content.Load<Texture2D>("Graphics\\char\\right")},
-                {"Up", content.Load<Texture2D>("Graphics\\char\\direct")},
-                {"Down", content.Load<Texture2D>("Graphics\\char\\back")},
-                {nameof(Wall), content.Load<Texture2D>("Graphics\\wall0")},
-                {nameof(Target), content.Load<Texture2D>("Graphics\\target0")},
-            };
-
-            backgrounds = new Texture2D[] { content.Load<Texture2D>("Graphics\\box0") };
-           
-            foreach (var file in content.RootDirectory)
-            {
-                Console.WriteLine(file);
-            }
-
-            currentTextureSize = 64;
-
-            windowHeight = graphics.PreferredBackBufferHeight;
-            windowWidth = graphics.PreferredBackBufferWidth;
-
-            creator = new MapCreator(graphics, textures);
-            SetMap(0);
-            isOver = false;
-            AdditionalObjects = new List<ACreature>();
-        }
 
         public void ReleaseCreatures(params string[] creatures)
         {
@@ -181,6 +199,11 @@ namespace NGame.Logic
                 {
                     return steps;
                 }
+            }
+
+            if (IsMapBlocked())
+            {
+                return -2;
             }
 
             return -1;

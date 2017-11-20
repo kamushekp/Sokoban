@@ -14,15 +14,5 @@ namespace NGame.Creatures
         {
 
         }
-
-        public override List<string> GetWhatReactingOn()
-        {
-            return new List<string>();
-        }
-
-        public override int GetDrawingPriority()
-        {
-            return 10;
-        }
     }
 }

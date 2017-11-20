@@ -36,11 +36,31 @@ namespace NGame.NMapCreator
         private void CreateWorld()
         {
             var dir = Environment.CurrentDirectory;
-            var pathToMaps = dir.Substring(0, dir.LastIndexOf("Game") + 4) + "\\Maps";
+            var pathToMaps = findingFolderMaps(dir);
             foreach(var file in Directory.GetFiles(pathToMaps))
             {
                 Maps.Add(CreateMap(file));
             }
+        }
+        private string findingFolderMaps(string path)
+        {
+
+            int i = 0;
+            while (i < 15)
+            {
+                var directories = Directory.GetDirectories(path);
+
+                foreach (var dir in directories)
+                {
+                    if (dir.Contains("Maps"))
+                    {
+                        return dir;
+                    }
+                }
+                path = Directory.GetParent(path).ToString();
+                i++;
+            }
+            return "";
         }
 
         private ACreature[,] CreateMap(string txtMap)
@@ -91,7 +111,6 @@ namespace NGame.NMapCreator
                             { "Up", textures["Up"] },
                             { "Down", textures["Down"] }
                         });
-
 
                 case 'w':
                     return new Wall(new Location(i, j), textures[nameof(Wall)]);

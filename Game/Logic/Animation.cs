@@ -31,7 +31,7 @@ namespace NGame.Logic
 
 		public int FrameHeight;
 
-		public bool Active;
+		public bool Active { get; set; }
 
 		public bool Looping;
 

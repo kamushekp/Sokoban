@@ -24,6 +24,7 @@ namespace NGame.Logic
      
         private Vector2[,] currentLocations; //местоположения существ в пикселях
 
+        private SpriteFont font; //шрифт для надписей
 
         public Rectangle GetCurrentMapRectangle()
         {
@@ -45,6 +46,7 @@ namespace NGame.Logic
 
         public void Draw(SpriteBatch spriteBatch)
         {
+
             foreach (var creature in AdditionalObjects)
             {
                 creature.Draw(spriteBatch, currentLocations[creature.Location.X, creature.Location.Y]);
@@ -60,6 +62,8 @@ namespace NGame.Logic
                     }
                 }
             }
+
+            spriteBatch.DrawString(font, String.Format("level {0}: Steps count {1}", lvlNumber, steps), new Vector2(0, 0), Color.AliceBlue);
         }
 
         public void SetMap(int i)

@@ -24,8 +24,6 @@ namespace NGame.Logic
 
         public UserComand CurrentComand { get; set; }
         
-        public abstract List<String> GetWhatReactingOn();
-
         public ACreature(Location location, Texture2D texture)
         {
             IsActive = true;
@@ -33,8 +31,6 @@ namespace NGame.Logic
             Texture = texture;
         }
         
-        public abstract int GetDrawingPriority();
-
         public void Draw(SpriteBatch spriteBatch, Vector2 PixLocation)
         {
             if (CurrentAnimation == null)

@@ -12,15 +12,5 @@ namespace NGame.Creatures
             this.CreatureHandler = new TargetHandler();
             this.IsActive = true;
         }
-
-        public override List<string> GetWhatReactingOn()
-        {
-            return new List<string>();
-        }
-
-        public override int GetDrawingPriority()
-        {
-            return 5;
-        }
     }
 }

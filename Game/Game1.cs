@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+
 namespace NGame
 {
     enum GameState
@@ -17,8 +18,9 @@ namespace NGame
         maps = 3,
         playing = 4,
         congrats = 5,
-        nameInputted = 7
-
+        nameInputted = 7,
+        rules = 8,
+        gameover = 9
     }
 
 
@@ -27,15 +29,18 @@ namespace NGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public List<Tuple<int, string>> TopFive { get; set; }
+        private int gameState;
 
         ShowFiveBest showFiveBest;
         SokobanMenu sokobanMenu;
         Sokoban sokoban;
         InputName inputName;
         Congrats congrats;
+        Rules rules;
+        GameOver gamover;
 
         private string playerName;
+        public List<Tuple<int, string>> TopFive { get; set; }
 
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
@@ -43,9 +48,7 @@ namespace NGame
         private const float TIMER = 0.1f;
         private float timer = TIMER;
 
-        private int gameState;
-
-
+        bool isGameIsFirstGameInSession = true;
 
         public Game1()
         {
@@ -59,11 +62,14 @@ namespace NGame
 
         protected override void Initialize()
         {
+            //разные менюшечки + игра
             sokobanMenu = new SokobanMenu(Content, graphics);
-            sokoban = new Sokoban(graphics, Content);
+            sokoban = new Sokoban(Content, graphics);
             showFiveBest = new ShowFiveBest(Content, graphics, TopFive);
             inputName = new InputName(Content, graphics);
             congrats = new Congrats(Content, graphics);
+            rules = new Rules(Content, graphics);
+            gamover = new GameOver(Content, graphics);
 
             base.Initialize();
 
@@ -99,44 +105,83 @@ namespace NGame
 
                 if (pressedKeys.Length == 1)
                 {
-                    if (gameState == (int)GameState.inputtingName)
+                    switch ((GameState)gameState)
                     {
-                        gameState = inputName.Update(currentKeyboardState);
-                    }
+                        case GameState.menu:
+                            {
+                                gameState = sokobanMenu.Update(currentKeyboardState);
+                                break;
+                            }
 
-                    if (gameState == (int)GameState.nameInputted)
-                    {
-                        playerName = inputName.GetName();
-                        gameState = (int)GameState.playing;
-                    }
+                        case GameState.inputtingName:
+                            {
+                                gameState = inputName.Update(currentKeyboardState);
+                                break;
+                            }
 
-                    else if (gameState == (int)GameState.menu)
-                    {
-                        gameState = sokobanMenu.Update(currentKeyboardState);
-                    }
+                        case GameState.nameInputted:
+                            {
+                                playerName = inputName.GetName();
+                                gameState = (int)GameState.playing;
+                                break;
+                            }
 
-                    else if (gameState == (int)GameState.playing)
-                    {
-                        var scores = sokoban.Update(currentKeyboardState, gameTime);
-                        HandleScores(scores);
+                        case GameState.playing:
+                            {
+                                if (isGameIsFirstGameInSession)
+                                {
+                                    var scores = sokoban.Update(currentKeyboardState, gameTime);
+                                    
 
-                        if (scores != -1)
-                        {
-                            gameState = (int)GameState.congrats;
-                        }
-                    }
+                                    if (scores > 0)
+                                    {
+                                        HandleScores(scores);
+                                        gameState = (int)GameState.congrats;
+                                    }
 
-                    else if (gameState == (int)GameState.showingBest)
-                    {
-                        gameState = showFiveBest.Update(currentKeyboardState);
-                    }
+                                    else if (scores == -2)
+                                    {
+                                        gameState = (int)GameState.gameover;
+                                    }
 
-                    else if (gameState == (int)GameState.congrats)
-                    {
-                        SaveBestPlayers();
-                        gameState = congrats.Update(currentKeyboardState);
+                                }
+                                else
+                                {
+                                    sokoban = new Sokoban(Content, graphics);
+                                    //sokoban.Update(currentKeyboardState, gameTime);
+                                    isGameIsFirstGameInSession = true;
+                                }
+                                break;
+                            }
+
+                        case GameState.showingBest:
+                            {
+                                gameState = showFiveBest.Update(currentKeyboardState);
+                                break;
+                            }
+
+                        case GameState.congrats:
+                            {
+                                SaveBestPlayers();
+                                gameState = congrats.Update(currentKeyboardState);
+                                break;
+                            }
+
+                        case GameState.rules:
+                            {
+                                gameState = rules.Update(currentKeyboardState);
+                                break;
+                            }
+
+                        case GameState.gameover:
+                            {
+                                gameState = (int)GameState.menu;
+                                isGameIsFirstGameInSession = false;
+                                break;
+                            }
                     }
                 }
+
                 timer = TIMER;
                 base.Update(gameTime);
             }
@@ -146,58 +191,74 @@ namespace NGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            if (gameState == (int)GameState.playing)
+            switch((GameState)gameState)
             {
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
-                    Matrix.CreateScale(sokoban.DrawMultiplier));
+                case GameState.playing:
+                    {
+                        spriteBatch.Begin
+                            (
+                            SpriteSortMode.Immediate,
+                            null, null, null, null, null,
+                            Matrix.CreateScale(sokoban.DrawMultiplier)
+                            );
 
-                spriteBatch.Draw(sokoban.GetBackground(0), sokoban.GetCurrentMapRectangle(), Color.White);
+                        spriteBatch.Draw(sokoban.GetBackground(0), sokoban.GetCurrentMapRectangle(), Color.White);
+                        sokoban.Draw(spriteBatch);
 
-                sokoban.Draw(spriteBatch);
+                         break;
+                    }
+                case GameState.menu:
+                    {
+                        spriteBatch.Begin(
+                            SpriteSortMode.Immediate,
+                            null, null, null, null, null,
+                            Matrix.CreateScale(2)
+                                          );
+                        sokobanMenu.Draw(spriteBatch);
 
-                spriteBatch.End();
+                        break;
+                    }
+                case GameState.showingBest:
+                    {
+                        spriteBatch.Begin();
+                        showFiveBest.Draw(spriteBatch);
+
+                        break;
+
+                    }
+                case GameState.inputtingName:
+                    {
+                        spriteBatch.Begin();
+                        inputName.Draw(spriteBatch);
+
+                        break;
+                    }
+                case GameState.congrats:
+                    {
+                        spriteBatch.Begin();
+                        congrats.Draw(spriteBatch);
+
+                        break;
+                    }
+                case GameState.rules:
+                    {
+                        spriteBatch.Begin();
+                        rules.Draw(spriteBatch);
+
+                        break;
+                    }
+                case GameState.gameover:
+                    {
+                        spriteBatch.Begin();
+                        gamover.Draw(spriteBatch);
+
+                        break;
+                    }
             }
-            else if (gameState == (int)GameState.menu)
 
-            {
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null,
-                    Matrix.CreateScale(2));
-
-                sokobanMenu.Draw(spriteBatch);
-
-                spriteBatch.End();
-            }
-
-            else if (gameState == (int)GameState.showingBest)
-            {
-                spriteBatch.Begin();
-
-                showFiveBest.Draw(spriteBatch);
-
-                spriteBatch.End();
-
-            }
-
-            else if (gameState == (int)GameState.inputtingName)
-            {
-                spriteBatch.Begin();
-
-                inputName.Draw(spriteBatch);
-
-                spriteBatch.End();
-            }
-
-            else if (gameState == (int)GameState.congrats)
-            {
-                spriteBatch.Begin();
-
-                congrats.Draw(spriteBatch);
-
-                spriteBatch.End();
-            }
-
+            spriteBatch.End();
             base.Draw(gameTime);
-             
+
         }
 
         private void HandleScores(int scores)
@@ -219,28 +280,32 @@ namespace NGame
                 }
 
                 TopFive = slice;
-                
+                isGameIsFirstGameInSession = false;
             }
             }
 
         private void LoadBestPlayers()
         {
             var dir = Environment.CurrentDirectory;
-            var pathToStats = dir.Substring(0, dir.LastIndexOf("Game") + 4) + "\\Stats\\";
-            var rows = File.ReadAllLines(pathToStats + "stats.txt");
+            var pathToStats = findingFileStats(dir, "stats");
+            var rows = File.ReadAllLines(pathToStats);
 
+            var topCount = 5;
             foreach(var row in rows)
             {
+                if (topCount == 0) break;
                 var splitted = row.Split();
                 int.TryParse(splitted[1], out int score);
 
                 TopFive.Add(new Tuple<int, string>(score, splitted[0]));
+                topCount--;
             }
         }
+
         private void SaveBestPlayers()
         {
             var dir = Environment.CurrentDirectory;
-            var pathToStats = dir.Substring(0, dir.LastIndexOf("Game") + 4) + "\\Stats\\stats.txt";
+            var pathToStats = findingFileStats(dir, "stats");
             var gameInfo = new List<string>();
 
             foreach (var elem in TopFive)
@@ -250,5 +315,27 @@ namespace NGame
 
             File.WriteAllLines(pathToStats, gameInfo);
         }
+
+        private string findingFileStats(string path, string name)
+        {
+
+            int i = 0;
+            while (i < 15)
+            {
+                var files = Directory.GetFiles(path);
+
+                foreach (var dir in files)
+                {
+                    if (dir.Contains(name))
+                    {
+                        return dir;
+                    }
+                }
+                path = Directory.GetParent(path).ToString();
+                i++;
+            }
+            return "";
+        }
     }
 }
+

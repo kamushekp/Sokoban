@@ -9,9 +9,19 @@ namespace NGame.CreaturesHandlers
     {
         public override Location ChangeGameState(Sokoban game, ACreature player, UserComand comand)
         {
-            HandleAnimations(player, comand);
+            /*
+            var active = (comand.Comand.GetPressedKeys().Length > 0);
+
+            foreach (var anim in player.Animations.Values)
+                anim.Active = active;
+             */
+            
 
             Location savePlayerLocation = new Location(player.Location);
+
+
+            HandleAnimations(player, comand);
+
             if (comand != null && player.IsActive)
             {
                 var nextLocation = GetNewLoc(game, player.Location, comand);
@@ -55,7 +65,7 @@ namespace NGame.CreaturesHandlers
                 }
                 player.IsActive = false;
             }
-            return player.Location.Sub(savePlayerLocation);
+        return player.Location.Sub(savePlayerLocation);
         }
 
         private void HandleAnimations(ACreature player, UserComand comand)
