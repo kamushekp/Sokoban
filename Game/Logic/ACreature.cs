@@ -38,12 +38,15 @@ namespace NGame.Logic
         public void Draw(SpriteBatch spriteBatch, Vector2 PixLocation)
         {
             if (CurrentAnimation == null)
+            {
                 spriteBatch.Draw(Texture, PixLocation, Color.White);
+            }
+
             else
             {
                 CurrentAnimation.Draw(spriteBatch);
             }
-                
+
         }
     }
 }

@@ -12,7 +12,6 @@ namespace NGame.Logic
 {
     public sealed partial class Sokoban
     {
-        
         //игровые карты существ (в том числе) в creator'e
         private MapCreator creator;
        
@@ -72,45 +71,10 @@ namespace NGame.Logic
             RemoveCreature(creature.Location);
             SetCreature(finish, creature);            
         }
-        public void SetMap(int i)
-        {
-            CurrentMap = creator.Maps[i];
-            currentActiveTargets = 0;
 
-            foreach(var creature in CurrentMap)
-            {
-                if (creature is Target)
-                {
-                    currentActiveTargets++;
-                }
-            }
-
-            var mapWidth = CurrentMap.GetLength(0) * currentTextureSize;
-            var mapHeight = CurrentMap.GetLength(1) * currentTextureSize;
-
-            creator.CurrentMapRectangle = new Rectangle(
-                (int)currentLocations[0, 0].X, (int)currentLocations[0, 0].Y,
-                 mapWidth, mapHeight);
-
-            DrawMultiplier = Math.Min((float)windowWidth / mapWidth, (float)windowHeight / mapHeight);
-
-        }
-        public Rectangle GetCurrentMapRectangle()
-        {
-            return creator.CurrentMapRectangle;
-        }
-
-        public Dictionary<string, Texture2D> Textures() => textures;
         public int GetHeight() => height;
         public int GetWidth() => width;
         public bool IsOver() => isOver;
-        public int GetTextureSize() => currentTextureSize;
-        public Texture2D GetBackground(int i)
-        {
-            return backgrounds[i];
-        }
-
-        public float DrawMultiplier { get; set; }
 
         public ACreature[,] CurrentMap
         {
@@ -177,29 +141,11 @@ namespace NGame.Logic
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            foreach (var creature in AdditionalObjects)
-            {
-                creature.Draw(spriteBatch, currentLocations[creature.Location.X, creature.Location.Y]);
-            }
-
-            for (int i = 0; i < GetHeight(); i++)
-            {
-                for (int j = 0; j < GetWidth(); j++)
-                {
-                    if (currentMap[j, i] != null)
-                    {
-                        currentMap[j, i].Draw(spriteBatch, currentLocations[j, i]);
-                    }
-                }
-            }
-        }
-
-        public void Update(KeyboardState currentKeyboardState, GameTime gameTime)
+        public int Update(KeyboardState currentKeyboardState, GameTime gameTime)
         {
             this.ReleaseCreatures(nameof(Player));
             var pressedKeys = currentKeyboardState.GetPressedKeys();
+            steps++;
 
             foreach (var creature in currentMap)
             {
@@ -207,13 +153,14 @@ namespace NGame.Logic
                 {
                     var dLocation = creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
 
+                    //если для существа определена анимация (игрок)
                     if (creature.CurrentAnimation != null)
                     {
                         creature.CurrentAnimation.Position = 
                         new Vector2
                         (
                         currentLocations[creature.Location.X, creature.Location.Y].X + currentTextureSize / 2,
-                        currentLocations[creature.Location.X, creature.Location.Y].Y + currentTextureSize / 2
+                        currentLocations[creature.Location.X, creature.Location.Y].Y + currentTextureSize / 2// - dLocation.Y * 8 * creature.Counter
                         );
 
                         creature.CurrentAnimation.Update(gameTime);
@@ -221,6 +168,7 @@ namespace NGame.Logic
                 }
             }
 
+            //стек сткрытых существ (на которых наступили)
             foreach (var creature in AdditionalObjects)
             {
                 creature.CreatureHandler.ChangeGameState(this, creature, new UserComand(currentKeyboardState));
@@ -230,8 +178,9 @@ namespace NGame.Logic
             {
                 SetMap(1);
             }
+
+            return -1;
             
         }
-
     }
 }

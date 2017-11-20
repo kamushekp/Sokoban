@@ -12,7 +12,7 @@ namespace NGame.CreaturesHandlers
             HandleAnimations(player, comand);
 
             Location savePlayerLocation = new Location(player.Location);
-            if (player.IsActive)
+            if (comand != null && player.IsActive)
             {
                 var nextLocation = GetNewLoc(game, player.Location, comand);
                 var nextCreature = game.GetCreature(nextLocation);
@@ -60,10 +60,14 @@ namespace NGame.CreaturesHandlers
 
         private void HandleAnimations(ACreature player, UserComand comand)
         {
-            var button = comand.Comand.GetPressedKeys()[0].ToString();
-            if (button == "Right" || button == "Left" || button == "Up" || button == "Down")
+            var pressed = comand.Comand.GetPressedKeys();
+            if (pressed.Length != 0)
             {
-                player.CurrentAnimation = player.Animations[button];
+                var button = comand.Comand.GetPressedKeys()[0].ToString();
+                if (button == "Right" || button == "Left" || button == "Up" || button == "Down")
+                {
+                    player.CurrentAnimation = player.Animations[button];
+                }
             }
             
         }
