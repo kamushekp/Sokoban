@@ -36,13 +36,13 @@ namespace NGame.NMapCreator
         private void CreateWorld()
         {
             var dir = Environment.CurrentDirectory;
-            var pathToMaps = findingFolderMaps(dir);
+            var pathToMaps = FindFolderMaps(dir);
             foreach(var file in Directory.GetFiles(pathToMaps))
             {
                 Maps.Add(CreateMap(file));
             }
         }
-        private string findingFolderMaps(string path)
+        private string FindFolderMaps(string path)
         {
 
             int i = 0;
@@ -112,14 +112,15 @@ namespace NGame.NMapCreator
                             { "Down", textures["Down"] }
                         });
 
-                case 'w':
-                    return new Wall(new Location(i, j), textures[nameof(Wall)]);
+                case '-':
+                    return null;
+                    
 
                 case 't':
                     return new Target(new Location(i, j), textures[nameof(Target)]);
 
                 default:
-                    return null;
+                    return new Wall(new Location(i, j), textures[nameof(Wall)]);
             }
         }
     }

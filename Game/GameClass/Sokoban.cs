@@ -72,10 +72,7 @@ namespace NGame.Logic
 
         public ACreature GetCreature(Location loc)
         {
-            if (loc == null)
-            {
-                throw new ArgumentNullException(nameof(loc));
-            }
+            if (loc == null) throw new ArgumentNullException("null location", nameof(loc));
 
             return CurrentMap[loc.X, loc.Y];
 
@@ -111,10 +108,7 @@ namespace NGame.Logic
         }
         public void SetCreature(Location loc, ACreature creature)
         {
-            if (loc == null)
-            {
-                throw new ArgumentNullException(nameof(loc));
-            }
+            if (loc == null) throw new ArgumentNullException("null location", nameof(loc));
 
             CurrentMap[loc.X, loc.Y] = creature;
             creature.Location = loc;
@@ -203,10 +197,10 @@ namespace NGame.Logic
 
             if (IsMapBlocked())
             {
-                return -2;
+                return -2; //поймаем снаружи как "игра проиграна"
             }
 
-            return -1;
+            return -1; //поймаем как "победил"
             
         }
     }

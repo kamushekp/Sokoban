@@ -8,11 +8,8 @@ namespace NGame.Logic
 {
     public abstract class ACreature
     {
-        public int Counter { get; set; }
-
         public Animation CurrentAnimation;
         public Dictionary<string, Animation> Animations;
-
         public bool IsActive { get; set; }
         
         //положение по матрице объектов
@@ -29,6 +26,7 @@ namespace NGame.Logic
             IsActive = true;
             Location = location;
             Texture = texture;
+            //Texture = texture ?? throw new ArgumentNullException("null texture", nameof(texture));
         }
         
         public void Draw(SpriteBatch spriteBatch, Vector2 PixLocation)

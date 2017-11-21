@@ -148,7 +148,7 @@ namespace NGame
                                 else
                                 {
                                     sokoban = new Sokoban(Content, graphics);
-                                    //sokoban.Update(currentKeyboardState, gameTime);
+                                    //sokoban.Draw(spriteBatch);
                                     isGameIsFirstGameInSession = true;
                                 }
                                 break;
@@ -287,7 +287,7 @@ namespace NGame
         private void LoadBestPlayers()
         {
             var dir = Environment.CurrentDirectory;
-            var pathToStats = findingFileStats(dir, "stats");
+            var pathToStats = FindFile(dir, "stats");
             var rows = File.ReadAllLines(pathToStats);
 
             var topCount = 5;
@@ -305,7 +305,7 @@ namespace NGame
         private void SaveBestPlayers()
         {
             var dir = Environment.CurrentDirectory;
-            var pathToStats = findingFileStats(dir, "stats");
+            var pathToStats = FindFile(dir, "stats");
             var gameInfo = new List<string>();
 
             foreach (var elem in TopFive)
@@ -316,7 +316,7 @@ namespace NGame
             File.WriteAllLines(pathToStats, gameInfo);
         }
 
-        private string findingFileStats(string path, string name)
+        private string FindFile(string path, string name)
         {
 
             int i = 0;
